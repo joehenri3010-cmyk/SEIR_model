@@ -5,14 +5,34 @@ Lattice::Lattice(int width, int height) : width(width), height(height) {
     grid.resize(height, std::vector<std::optional<Agent>>(width));
 }
 
+// lattice.cpp
 void Lattice::update() {
-    // Update the lattice with the new position and compartment of the agents
+    // collect all current agents
+    std::vector<Agent> all_agents;
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             if (grid[i][j].has_value()) {
-                grid[i][j]->updatelattice(*this);
+                all_agents.push_back(grid[i][j].value());
             }
         }
+    }
+
+    // clear the grid
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            grid[i][j].reset();
+        }
+    }
+
+    // update and replace each agent
+    for (auto& agent : all_agents) {
+        agent.move(width, height);         // move agent
+        agent.updateCompartment(all_agents); // update state based on neighbours
+        
+        // place agent in new position
+        int nx = agent.getX();
+        int ny = agent.getY();
+        grid[ny][nx] = agent;
     }
 }
 

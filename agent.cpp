@@ -52,8 +52,4 @@ void Agent::updateCompartment(const Agents& other) {
     }
 }
 
-void Agent::updatelattice(Lattice& lattice) {
-    // Update the lattice with the new position and compartment of the agent
-    lattice.update();
-}
 
