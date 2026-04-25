@@ -11,7 +11,7 @@ private:
 public:
     Lattice(int width, int height);
     void update();
-    void addAgent(int x, int y, Agent::Compartment state);
+    void addAgent(int x, int y, Agent::Compartment state, double sigma, double gamma);
     const std::vector<std::vector<std::optional<Agent>>>& getGrid() const { return grid; }
 };
 
