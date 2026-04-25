@@ -11,6 +11,13 @@ void Agent::move() {
     
     x += dis(gen);
     y += dis(gen);
+
+    // wrap around the edges of the lattice
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    if (x >= lattice.getWidth()) x = lattice.getWidth() - 1;
+    if (y >= lattice.getHeight()) y = lattice.getHeight() - 1;
+
 }
 
 void Agent::updateCompartment(const Agents& other) {
