@@ -16,9 +16,9 @@ void Lattice::update() {
     }
 }
 
-void Lattice::addAgent(int x, int y, Agent::Compartment state) {
+void Lattice::addAgent(int x, int y, Agent::Compartment state, double sigma, double gamma) {
     // Add an agent to the lattice at the specified position and compartment
-    grid[y][x] = Agent(x, y, state, 0.0, 0.0);
+    grid[y][x] = Agent(x, y, state, sigma, gamma);
 }
 
 
