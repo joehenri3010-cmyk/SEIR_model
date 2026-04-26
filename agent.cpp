@@ -1,5 +1,5 @@
-#include <agent.h>
-#include <lattice.h>
+#include "agent.h"
+#include "lattice.h"
 
 Agent::Agent(int x, int y, Compartment current_state, double sigma, double gamma) : x(x), y(y), current_state(current_state), sigma(sigma), gamma(gamma) {}
 
