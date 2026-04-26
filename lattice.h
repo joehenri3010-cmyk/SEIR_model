@@ -3,6 +3,7 @@
 
 #include "agent.h"
 #include <vector>
+#include <optional>
 
 class Lattice {
 private:
