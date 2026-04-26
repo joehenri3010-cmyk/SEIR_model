@@ -5,7 +5,7 @@ Agent::Agent(int x, int y, Compartment current_state, double sigma, double gamma
 
 std::mt19937 Agent::rng(std::random_device{}());
 
-void Agent::move() {
+void Agent::move(int width, int height) {
     // Randomly move the agent to one of the 8 neighboring positions
     std::uniform_int_distribution<> dis(-1, 1);
     
@@ -15,12 +15,12 @@ void Agent::move() {
     // wrap around the edges of the lattice
     if (x < 0) x = 0;
     if (y < 0) y = 0;
-    if (x >= lattice.getWidth()) x = lattice.getWidth() - 1;
-    if (y >= lattice.getHeight()) y = lattice.getHeight() - 1;
+    if (x >= width) x = width - 1;
+    if (y >= height) y = height - 1;
 
 }
 
-void Agent::updateCompartment(const Agents& other) {
+void Agent::updateCompartment(const std::vector<Agent>& other) {
     // If the agent is susceptible and has at least one infected neighbor, it becomes exposed
     if (current_state == SUSCEPTIBLE) {
         for (const auto& neighbor : other) {
