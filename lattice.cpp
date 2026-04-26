@@ -33,7 +33,7 @@ void Lattice::update() {
         int nx = agent.getX();
         int ny = agent.getY();
         grid[ny][nx] = agent;
-    }
+    }git 
 }
 
 void Lattice::addAgent(int x, int y, Agent::Compartment state, double sigma, double gamma) {

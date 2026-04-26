@@ -13,6 +13,7 @@ private:
     double sigma; // chance to become infected
     double gamma; // chance to recover
 public:
+    static std::mt19937 rng; // random number generator
     enum Compartment { SUSCEPTIBLE = 0, EXPOSED = 1, INFECTED = 2, RECOVERED = 3 }; // compartment of agent (0 = susceptible, 1 = exposed, 2 = infected, 3 = recovered)
     Compartment current_state; // current state of the agent
     Agent(int x, int y, Compartment current_state, double sigma, double gamma); // constructor
