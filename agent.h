@@ -4,8 +4,6 @@
 #include <random>
 #include <vector>
 
-class Lattice; // Forward declaration of Lattice class
-
 // Define the class agent 
 class Agent {
 private:
