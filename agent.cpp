@@ -24,7 +24,7 @@ void Agent::updateCompartment(const Agents& other) {
     // If the agent is susceptible and has at least one infected neighbor, it becomes exposed
     if (current_state == SUSCEPTIBLE) {
         for (const auto& neighbor : other) {
-            if (neighbor.isInfected()) {
+            if (neighbor.getCompartment() == INFECTED) {
                 current_state = EXPOSED;
                 break;
             }
