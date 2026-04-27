@@ -27,8 +27,16 @@ void Lattice::update() {
     // update and replace each agent
     for (auto& agent : all_agents) {
         agent.move(width, height);         // move agent
-        agent.updateCompartment(all_agents); // update state based on neighbours
         
+        // find neighbors for the agent within a 1 cell radius
+        std::vector<Agent> neighbors;
+        for (const auto &other : all_agents) {
+            if (other.getX() >= agent.getX() - 1 && other.getX() <= agent.getX() + 1 && // check if other agent is within 1 cell radius
+                other.getY() >= agent.getY() - 1 && other.getY() <= agent.getY() + 1) { // check if other agent is within 1 cell radius
+                    neighbors.push_back(other);
+                }
+            }
+        }
         // place agent in new position
         int nx = agent.getX();
         int ny = agent.getY();
