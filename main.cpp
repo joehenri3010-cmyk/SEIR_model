@@ -9,9 +9,9 @@ int main() {
     int height = 100;
     int total_agents = 200;
     int initial_infected = 5;
-    int time_steps = 2000;
-    double sigma = 0.3;
-    double gamma = 0.1;
+    int time_steps = 20;
+    double sigma = 0.3; // rate of exposed to infected transition
+    double gamma = 0.1; // rate of infected to recovered transition
 
     // Random number generator setup
     std::uniform_int_distribution<int> disx(0, width - 1);

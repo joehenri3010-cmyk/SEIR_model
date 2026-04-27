@@ -18,6 +18,7 @@ public:
     void move(int width, int height); // function to move the agent
     Compartment getCompartment() const { return current_state; }; // function to get the compartment of the agent
     void updateCompartment(const std::vector<Agent>& other); // function to update the compartment of the agent
+    void setPosition(int new_x, int new_y) { x = new_x; y = new_y; } // function to set the position of the agent
     int getX() const { return x; } // function to get the x position of the agent
     int getY() const { return y; } // function to get the y position of the agent    
 };
