@@ -36,7 +36,7 @@ void Lattice::update() {
                     neighbors.push_back(other);
                 }
             }
-        }
+        agent.updateCompartment(neighbors); // update the compartment of the agent based on its neighbors   
         // place agent in new position
         int nx = agent.getX();
         int ny = agent.getY();
