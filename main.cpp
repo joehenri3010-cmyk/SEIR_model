@@ -22,15 +22,11 @@ int main() {
 
     // Initialize agents
     for (int i = 0; i < total_agents-initial_infected; ++i) {
-        int x = disx(Agent::rng);
-        int y = disy(Agent::rng);
-        lattice.addAgent(x, y, Agent::SUSCEPTIBLE, sigma, gamma);
+        lattice.addAgentRandom(Agent::SUSCEPTIBLE, sigma, gamma);
     }
     // Initialize infected agents
     for (int i = 0; i < initial_infected; ++i) {
-        int x = disx(Agent::rng);
-        int y = disy(Agent::rng);
-        lattice.addAgent(x, y, Agent::INFECTED, sigma, gamma);
+        lattice.addAgentRandom(Agent::INFECTED, sigma, gamma);
     }
     // Run the simulation for a number of steps
     for (int step = 0; step < time_steps; step++) {
@@ -58,10 +54,13 @@ int main() {
             }
         }
         // Print counts
+        int total_count = susceptible_count + exposed_count + infected_count + recovered_count; 
+
         std::cout << "S: " << susceptible_count 
                       << " E: " << exposed_count 
                       << " I: " << infected_count 
-                      << " R: " << recovered_count;
+                      << " R: " << recovered_count
+                      << " Total: " << total_count;
         std::cout << "\n";
         // Update the lattice for the next time step
         lattice.update();

@@ -1,5 +1,6 @@
 #include "lattice.h"
 #include "agent.h"
+#include <iostream>
 
 Lattice::Lattice(int width, int height) : width(width), height(height) {
     grid.resize(height, std::vector<std::optional<Agent>>(width));
@@ -24,7 +25,7 @@ void Lattice::update() {
         }
     }
 
-    // update and replace each agent
+    // store positions and move all agents to new positions
     for (auto& agent : all_agents) {
 
         // store original position in case the new position is occupied
@@ -34,7 +35,29 @@ void Lattice::update() {
         // move agent to new position
         agent.move(width, height);
 
-        // find neighbors for the agent within a 1 cell radius
+        int nx = agent.getX();
+        int ny = agent.getY();
+
+       if (!grid[ny][nx].has_value()) {
+           grid[ny][nx] = agent;
+        }
+        else { // if the new position is occupied and the original position is empty, move the agent back to its original position
+            agent.setPosition(orig_x, orig_y);
+            grid[orig_y][orig_x] = agent;
+        }
+    }
+     // recollect all current agents after move to update their compartments based on their new positions
+    all_agents.clear();
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            if (grid[i][j].has_value()) {
+                all_agents.push_back(grid[i][j].value());
+            }
+        }
+    }
+
+    // find neighbors for the agent within a 1 cell radius
+    for (auto& agent : all_agents) {
         std::vector<Agent> neighbors;
         for (const auto &other : all_agents) {
             if (other.getX() >= agent.getX() - 1 && other.getX() <= agent.getX() + 1 && // check if other agent is within 1 cell radius
@@ -42,19 +65,8 @@ void Lattice::update() {
                     neighbors.push_back(other);
                 }
             }
-        agent.updateCompartment(neighbors); // update the compartment of the agent based on its neighbors   
-
-        // place agent in new position
-        int nx = agent.getX();
-        int ny = agent.getY();
-
-        if (!grid[ny][nx].has_value()) { // only place the agent if the new position is empty
-            grid[ny][nx] = agent;
-        }
-        else {
-            agent.setPosition(orig_x, orig_y); // if the new position is occupied, keep the agent in its current position
-            grid[orig_y][orig_x] = agent; // place the agent back in its original position
-        }
+        agent.updateCompartment(neighbors); // update the compartment of the agent based on its neighbors  
+        grid[agent.getY()][agent.getX()] = agent; // place the agent back in the grid with its updated compartment 
     }
 }
 
@@ -63,5 +75,15 @@ void Lattice::addAgent(int x, int y, Agent::Compartment state, double sigma, dou
     grid[y][x] = Agent(x, y, state, sigma, gamma);
 }
 
+void Lattice::addAgentRandom(Agent::Compartment state, double sigma, double gamma) {
+    std::uniform_int_distribution<int> disx(0, width - 1); // assuming lattice size is width x height
+    std::uniform_int_distribution<int> disy(0, height - 1);
+    int x, y;
+    do {
+        x = disx(Agent::rng);
+        y = disy(Agent::rng);
+    } while (grid[y][x].has_value()); // keep generating random positions until an empty cell is found
+    grid[y][x] = Agent(x, y, state, sigma, gamma); // add the agent to the lattice at the random position
+}
 
 
