@@ -60,11 +60,17 @@ void Lattice::update() {
     for (auto& agent : all_agents) {
         std::vector<Agent> neighbors;
         for (const auto &other : all_agents) {
-            if (other.getX() >= agent.getX() - 1 && other.getX() <= agent.getX() + 1 && // check if other agent is within 1 cell radius
-                other.getY() >= agent.getY() - 1 && other.getY() <= agent.getY() + 1) { // check if other agent is within 1 cell radius
-                    neighbors.push_back(other);
-                }
+            int dx = std::abs(agent.getX() - other.getX());
+            int dy = std::abs(agent.getY() - other.getY());
+
+            // account for wrap-around distance
+            dx = std::min(dx, width - dx);
+            dy = std::min(dy, height - dy);
+
+            if (dx <= 1 && dy <= 1) { // if the other agent is within a 1 cell radius
+                neighbors.push_back(other);
             }
+        }
         agent.updateCompartment(neighbors); // update the compartment of the agent based on its neighbors  
         grid[agent.getY()][agent.getX()] = agent; // place the agent back in the grid with its updated compartment 
     }
