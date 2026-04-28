@@ -56,7 +56,9 @@ void Lattice::update() {
             all_agents[i].setPosition(orig_x, orig_y); // move the agent back to its original position
             grid[orig_y][orig_x] = all_agents[i]; // place the agent back in the grid at its original position
         }        
-        else {std::cout << "AGENT LOST: (" << orig_x << "," << orig_y << ") -> (" << nx << "," << ny << ")\n";   
+        else {std::cout << "AGENT LOST: (" << orig_x << "," << orig_y << ") -> (" << nx << "," << ny << ")\n";
+            std::cout << "  target cell occupied by agent at: (" << grid[ny][nx]->getX() << "," << grid[ny][nx]->getY() << ")\n";
+            std::cout << "  original cell occupied by agent at: (" << grid[orig_y][orig_x]->getX() << "," << grid[orig_y][orig_x]->getY() << ")\n";
         }
 
      // recollect all current agents after move to update their compartments based on their new positions
