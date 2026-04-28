@@ -26,35 +26,41 @@ void Lattice::update() {
     }
 
     // store positions and move all agents to new positions
-    int skipped = 0; // DEBUG: track skipped agents
-    for (auto& agent : all_agents) {
+    std::vector<std::pair<int, int>> original_positions(all_agents.size());
+    for (size_t i = 0; i < all_agents.size(); i++) {
+        original_positions[i] = {all_agents[i].getX(), all_agents[i].getY()};
 
-        // store original position in case the new position is occupied
-        int orig_x = agent.getX();
-        int orig_y = agent.getY();
-
-        // move agent to new position
-        agent.move(width, height);
-
-        int nx = agent.getX();
-        int ny = agent.getY();
-
-       if (!grid[ny][nx].has_value()) {
-           grid[ny][nx] = agent;
+        // move the agent to a new position
+        all_agents[i].move(width, height);
+        
+        // place stationary agents first 
+        if (all_agents[i].getX() == original_positions[i].first && 
+            all_agents[i].getY() == original_positions[i].second) {
+            grid[original_positions[i].second][original_positions[i].first] = all_agents[i];
         }
+    }   
+
+    for (int i = 0; i < all_agents.size(); i++) {
+
+        int nx = all_agents[i].getX();
+        int ny = all_agents[i].getY();
+        auto [orig_x, orig_y] = original_positions[i];
+
+        if (nx == orig_x && ny == orig_y) continue; // if the agent did not move, skip to the next agent
+
+       if (!grid[ny][nx].has_value()) { // if the new position is empty, move the agent to the new position
+           grid[ny][nx] = all_agents[i]; // place the agent in the grid at its new position
+        }
+
         else if (!grid[orig_y][orig_x].has_value()) { // if the new position is occupied and the original position is empty, move the agent back to its original position
-            agent.setPosition(orig_x, orig_y);
-            grid[orig_y][orig_x] = agent;
-        } else {
-            // if both the new position and original position are occupied, skip moving this agent for this update
-            // debug start
-            skipped++;
-            std::cout << "SKIPPED: (" << orig_x << "," << orig_y << ") -> (" << nx << "," << ny << ")\n";
-            // debug finish
+            all_agents[i].setPosition(orig_x, orig_y); // move the agent back to its original position
+            grid[orig_y][orig_x] = all_agents[i]; // place the agent back in the grid at its original position
+        }        
+        else {std::cout << "AGENT LOST: (" << orig_x << "," << orig_y << ") -> (" << nx << "," << ny << ")\n";   
         }
-    }
-    std::cout << "Total skipped agents: " << skipped << "\n"; // debugging output to track skipped agents
+
      // recollect all current agents after move to update their compartments based on their new positions
+    }
     all_agents.clear();
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -79,6 +85,7 @@ void Lattice::update() {
                 neighbors.push_back(other);
             }
         }
+
         agent.updateCompartment(neighbors); // update the compartment of the agent based on its neighbors  
         grid[agent.getY()][agent.getX()] = agent; // place the agent back in the grid with its updated compartment 
     }
