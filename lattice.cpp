@@ -27,42 +27,34 @@ void Lattice::update() {
 
     // store positions and move all agents to new positions
     std::vector<std::pair<int, int>> original_positions(all_agents.size());
+    std::vector<std::pair<int, int>> intended_positions(all_agents.size());
     for (size_t i = 0; i < all_agents.size(); i++) {
         original_positions[i] = {all_agents[i].getX(), all_agents[i].getY()};
+        all_agents[i].move(width, height); // move the agent to a new position
+        intended_positions[i] = {all_agents[i].getX(), all_agents[i].getY()};
+    }
 
-        // move the agent to a new position
-        all_agents[i].move(width, height);
-        
-        // place stationary agents first 
-        if (all_agents[i].getX() == original_positions[i].first && 
-            all_agents[i].getY() == original_positions[i].second) {
-            grid[original_positions[i].second][original_positions[i].first] = all_agents[i];
-        }
-    }   
-
-    for (int i = 0; i < all_agents.size(); i++) {
-
-        int nx = all_agents[i].getX();
-        int ny = all_agents[i].getY();
+    // detect conflicts
+    // count how many agents intend to move to each cell
+    std::vector<std::vector<int>> intended_counts(height, std::vector<int>(width, 0));
+    for (size_t i = 0; i < all_agents.size(); i++) {
+        auto [ix, iy] = intended_positions[i];
+        intended_counts[iy][ix]++;
+    }
+    //place agents
+    for (size_t i = 0; i < all_agents.size(); i++) {
+        auto [ix, iy] = intended_positions[i];
         auto [orig_x, orig_y] = original_positions[i];
 
-        if (nx == orig_x && ny == orig_y) continue; // if the agent did not move, skip to the next agent
-
-       if (!grid[ny][nx].has_value()) { // if the new position is empty, move the agent to the new position
-           grid[ny][nx] = all_agents[i]; // place the agent in the grid at its new position
+        if (intended_counts[iy][ix] == 1) {
+            grid[iy][ix] = all_agents[i]; // move the agent back to its original position
         }
-
-        else if (!grid[orig_y][orig_x].has_value()) { // if the new position is occupied and the original position is empty, move the agent back to its original position
+        else if (intended_counts[iy][ix] > 1) { // if there is a conflict, move the agent back to its original position
             all_agents[i].setPosition(orig_x, orig_y); // move the agent back to its original position
             grid[orig_y][orig_x] = all_agents[i]; // place the agent back in the grid at its original position
-        }        
-        else {std::cout << "AGENT LOST: (" << orig_x << "," << orig_y << ") -> (" << nx << "," << ny << ")\n";
-            std::cout << "  target cell occupied by agent at: (" << grid[ny][nx]->getX() << "," << grid[ny][nx]->getY() << ")\n";
-            std::cout << "  original cell occupied by agent at: (" << grid[orig_y][orig_x]->getX() << "," << grid[orig_y][orig_x]->getY() << ")\n";
-        }
-
-     // recollect all current agents after move to update their compartments based on their new positions
+        }   
     }
+    // recollect all current agents after move to update their compartments based on their new positions
     all_agents.clear();
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -108,5 +100,3 @@ void Lattice::addAgentRandom(Agent::Compartment state, double sigma, double gamm
     } while (grid[y][x].has_value()); // keep generating random positions until an empty cell is found
     grid[y][x] = Agent(x, y, state, sigma, gamma); // add the agent to the lattice at the random position
 }
-
-
