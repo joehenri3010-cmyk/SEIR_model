@@ -13,11 +13,8 @@ void Agent::move(int width, int height) {
     y += dis(rng);
 
     // wrap around the edges of the lattice
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-    if (x >= width) x = width - 1;
-    if (y >= height) y = height - 1;
-
+    x = ((x + width) + width) % width;
+    y = ((y + height) + height) % height;
 }
 
 void Agent::updateCompartment(const std::vector<Agent>& other) {
