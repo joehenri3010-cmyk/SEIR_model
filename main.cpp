@@ -13,10 +13,6 @@ int main() {
     double sigma = 0.3; // rate of exposed to infected transition
     double gamma = 0.1; // rate of infected to recovered transition
 
-    // Random number generator setup
-    std::uniform_int_distribution<int> disx(0, width - 1);
-    std::uniform_int_distribution<int> disy(0, height - 1);
-
     // initialise lattice
     Lattice lattice(width, height);
 
